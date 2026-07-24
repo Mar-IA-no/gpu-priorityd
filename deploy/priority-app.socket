@@ -1,0 +1,11 @@
+[Unit]
+Description=Example socket for a priority GPU application
+
+[Socket]
+ListenStream=127.0.0.1:8765
+NoDelay=true
+Service=priority-app.service
+
+[Install]
+WantedBy=sockets.target
+

@@ -1,0 +1,14 @@
+[Unit]
+Description=Example socket-activated priority GPU application
+Requires=priority-app.socket
+After=network.target
+
+[Service]
+Type=simple
+ExecStartPre=/usr/local/bin/gpu-priority --config /etc/gpu-priorityd.toml admit
+# Replace this with a server that supports systemd's inherited socket on fd 3.
+ExecStart=/opt/priority-app/.venv/bin/uvicorn app:app --fd 3
+Restart=no
+TimeoutStartSec=120
+TimeoutStopSec=45
+

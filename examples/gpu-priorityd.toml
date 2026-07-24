@@ -1,0 +1,23 @@
+version = 1
+
+[gpu]
+index = 0
+# Set this to the memory the priority service needs after protected usage.
+required_free_mib = 20000
+
+[service]
+unit = "priority-app.service"
+protected_units = ["safety-monitor.service"]
+# Exit zero only when stopping the priority service cannot destroy live state.
+safe_to_stop_command = ["/usr/local/libexec/priority-app-is-idle"]
+
+[preemption]
+grace_seconds = 10
+release_timeout_seconds = 30
+exit_code = 75
+
+[paths]
+state_root = "/var/lib/gpu-priorityd"
+run_root = "/run/gpu-priorityd"
+lock_path = "/run/lock/gpu-priorityd.lock"
+

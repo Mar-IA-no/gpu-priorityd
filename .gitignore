@@ -1,0 +1,14 @@
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.coverage
+coverage.xml
+build/
+dist/
+.venv/
+.idea/
+.vscode/
+.DS_Store
+*.local.toml
+

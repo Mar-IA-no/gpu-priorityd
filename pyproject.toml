@@ -1,0 +1,36 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "gpu-priorityd"
+version = "0.1.0"
+description = "Single-host priority arbitration for interactive NVIDIA GPU services and preemptible batch jobs"
+readme = "README.md"
+requires-python = ">=3.11"
+license = {text = "MIT"}
+authors = [{name = "Mariano F. M."}]
+keywords = ["gpu", "nvidia", "systemd", "preemption", "inference", "mlops"]
+classifiers = [
+  "Development Status :: 3 - Alpha",
+  "Environment :: Console",
+  "License :: OSI Approved :: MIT License",
+  "Operating System :: POSIX :: Linux",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
+  "Topic :: System :: Systems Administration",
+]
+
+[project.scripts]
+gpu-priority = "gpu_priorityd.cli:main"
+
+[project.urls]
+Homepage = "https://github.com/Mar-IA-no/gpu-priorityd"
+Repository = "https://github.com/Mar-IA-no/gpu-priorityd"
+Issues = "https://github.com/Mar-IA-no/gpu-priorityd/issues"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
