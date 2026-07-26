@@ -228,6 +228,41 @@ does not wake the GPU service.
 Read [`docs/INTEGRATION.md`](docs/INTEGRATION.md) and complete its disposable
 workload acceptance sequence before connecting a real service.
 
+### Operating notes from a live deployment
+
+Six weeks of running this in front of a real interactive service, in the
+order the lessons hurt:
+
+- **Preemption is not requeueing.** Exit `75` tells you the GPU was reclaimed;
+  nothing brings the job back. Batch work must either be idempotent and
+  relaunched by whatever supervises it, or checkpoint often enough that losing
+  the tail is cheap. Treat `75` as a scheduling event, not an error — and
+  decide *up front* who reacts to it.
+- **The absolute-path rule is not pedantry.** A transient unit does not inherit
+  the shell's notion of where it is; the first job we lost died on
+  `can't open file '//train.py'`. Absolute paths everywhere, including the
+  interpreter.
+- **Long-lived jobs are the interesting case.** A resident server that holds
+  the GPU is exactly what the wrapper's transient-unit model is *not* shaped
+  for, and it is also the workload people most want to borrow the card with.
+  Two workable shapes: give it an idle TTL so it releases VRAM on its own, or
+  escalate it as a documented exception with its own unit. Do not smuggle a
+  daemon in through `run` and hope.
+- **Verify against the process, not the config file.** Editing a service's
+  environment declares an intention; until something restarts, the running
+  process keeps the old one. Check `/proc/<pid>/environ`, and have services
+  publish their *effective* configuration on a health endpoint so drift is
+  visible without an investigation.
+- **A protected service that is socket-activated looks idle.** Allowlisting the
+  unit is not enough if it only materializes on demand: the arbiter must reason
+  about the socket, not just the running process, or an incoming request will
+  race a batch job that was admitted a second earlier.
+- **Shared infrastructure is a boundary too.** Batch jobs and the priority
+  service ended up sharing a Python venv and model weights. That is efficient
+  and fine — but it means "isolated" describes the GPU and the cgroup, not the
+  filesystem. Say so explicitly, or someone will assume more separation than
+  exists.
+
 ### Commands
 
 ```text
